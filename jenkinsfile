@@ -1,0 +1,29 @@
+pipeline {
+agent any
+environment {
+docker_username = credentials('manikandan16497') // Set up your Jenkins credentials
+docker_password = credentials('docker-password-id')
+}
+stages {
+stage('Build') {
+steps {
+// Build Docker image using build script file
+sh './build.sh'
+}
+}
+stage('Login') {
+steps {
+sh 'docker login -u $docker_username -p $docker_password'
+}
+}
+stage('Deploy') {
+steps {
+script {
+if (env.GIT_BRANCH == "origin/dev") {
+sh './deploy.sh'
+}
+}
+}
+}
+}
+}
